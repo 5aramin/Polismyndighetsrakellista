@@ -35,249 +35,90 @@ const loginError = document.querySelector("#loginError");
 const logoutBtn = document.querySelector("#logoutBtn");
 
 const membersEl = document.querySelector("#members");
+const loginMembersList = document.querySelector("#loginMembersList");
+const loginMemberCount = document.querySelector("#loginMemberCount");
 const emptyState = document.querySelector("#emptyState");
 const memberCount = document.querySelector("#memberCount");
 const template = document.querySelector("#memberTemplate");
 const form = document.querySelector("#memberForm");
 const searchInput = document.querySelector("#searchInput");
 const roleInput = document.querySelector("#roleInput");
-const filterInputs = [...document.querySelectorAll(".filter-panel input[type='checkbox']")];
+let filterInputs = [...document.querySelectorAll(".filter-panel input[type='checkbox']")];
 const clearFiltersBtn = document.querySelector("#clearFiltersBtn");
 
 const sessionKey = "server-panel-authenticated";
 const username = "Medlemsansvarig123";
 const password = "Polismyndigheten123";
+function makeRakels(start, end) {
+  const rakels = [];
+  for (let number = start; number >= end; number -= 10) {
+    rakels.push(`1-39-${number}`);
+  }
+  return rakels;
+}
+
 const policeRanks = [
   "Rikspolischef",
-  "Bitr. Rikspolischef",
+  "Btr. Rikspolischef",
   "Polisdirektör",
-  "Bitr. Polisdirektör",
-  "Regions Chef",
+  "Btr. Polisdirektör",
   "Polismästare",
   "Polisöverintendent",
-  "Polisledning",
-  "Veckans kollega",
   "Polisintendent",
-  "Sekreterare",
-  "Kommissarie",
-  "Administration",
-  "Inspektör",
-  "Polisassistent 4",
+  "Polissekreterare YB",
+  "Polissekreterare",
+  "Poliskommissarie YB",
+  "Poliskommissarie",
+  "Polisinspektör YB",
+  "Polisinspektör",
+  "Polisassistent 4års",
   "Polisassistent",
-  "Aspirant",
-  "Studerande",
+  "Polisaspirant",
+  "Polisstuderande",
+  "Praktikant",
 ];
 
 const legacyRoles = {
   Polismyndigheten: "Polisassistent",
-  Serverledning: "Polisledning",
-  Civilperson: "Studerande",
-  Räddningstjänst: "Studerande",
-  Sjukvården: "Studerande",
+  Serverledning: "Polismästare",
+  Civilperson: "Polisstuderande",
+  Räddningstjänst: "Polisstuderande",
+  Sjukvården: "Polisstuderande",
   SOS: "Studerande",
-  Utvecklingsteam: "Administration",
+  Utvecklingsteam: "Polissekreterare",
+  "Bitr. Rikspolischef": "Btr. Rikspolischef",
+  "Bitr. Polisdirektör": "Btr. Polisdirektör",
+  Regions Chef: "Polismästare",
+  Polisledning: "Polismästare",
+  "Veckans kollega": "Polisintendent",
+  Sekreterare: "Polissekreterare",
+  Kommissarie: "Poliskommissarie",
+  Administration: "Polissekreterare",
+  Inspektör: "Polisinspektör",
+  "Polisassistent 4": "Polisassistent 4års",
+  Aspirant: "Polisaspirant",
+  Studerande: "Polisstuderande",
 };
 
 const rakelByRank = {
-  Rikspolischef: ["1-35-99"],
-  "Bitr. Rikspolischef": ["1-35-98"],
-  Polisdirektör: ["1-35-97"],
-  "Bitr. Polisdirektör": ["1-35-96"],
-  "Regions Chef": ["1-35-95"],
-  Polismästare: ["1-35-94", "1-35-93", "1-35-92", "1-35-91", "1-35-90"],
-  Polisöverintendent: [
-    "1-35-89",
-    "1-35-88",
-    "1-35-87",
-    "1-35-86",
-    "1-35-85",
-    "1-35-84",
-    "1-35-83",
-    "1-35-82",
-    "1-35-81",
-    "1-35-80",
-  ],
-  Polisledning: [],
-  "Veckans kollega": [],
-  Polisintendent: [
-    "1-35-79",
-    "1-35-78",
-    "1-35-77",
-    "1-35-76",
-    "1-35-75",
-    "1-35-74",
-    "1-35-73",
-    "1-35-72",
-    "1-35-71",
-    "1-35-70",
-    "1-35-69",
-    "1-35-68",
-    "1-35-67",
-    "1-35-66",
-  ],
-  Sekreterare: [
-    "1-34-95",
-    "1-34-94",
-    "1-34-93",
-    "1-34-92",
-    "1-34-91",
-    "1-34-90",
-    "1-34-89",
-    "1-34-88",
-    "1-34-87",
-    "1-34-86",
-    "1-34-85",
-  ],
-  Kommissarie: [
-    "1-33-95",
-    "1-33-94",
-    "1-33-93",
-    "1-33-92",
-    "1-33-91",
-    "1-33-90",
-    "1-33-89",
-    "1-33-88",
-    "1-33-87",
-    "1-33-86",
-    "1-33-85",
-    "1-33-84",
-    "1-33-83",
-    "1-33-82",
-    "1-33-81",
-    "1-33-80",
-    "1-33-70",
-  ],
-  Administration: [],
-  Inspektör: [
-    "1-32-95",
-    "1-32-94",
-    "1-32-93",
-    "1-32-50",
-    "1-32-49",
-    "1-32-48",
-    "1-32-47",
-    "1-32-46",
-    "1-32-45",
-    "1-32-44",
-    "1-32-43",
-    "1-32-42",
-    "1-32-41",
-    "1-32-40",
-    "1-32-39",
-    "1-32-38",
-  ],
-  "Polisassistent 4": [
-    "1-31-95",
-    "1-31-94",
-    "1-31-93",
-    "1-31-92",
-    "1-31-91",
-    "1-31-90",
-    "1-31-89",
-    "1-31-88",
-    "1-31-87",
-    "1-31-86",
-    "1-31-85",
-    "1-31-84",
-    "1-31-83",
-    "1-31-82",
-    "1-31-81",
-    "1-31-80",
-    "1-31-79",
-    "1-31-78",
-    "1-31-77",
-    "1-31-76",
-    "1-31-75",
-    "1-31-74",
-    "1-31-73",
-    "1-31-72",
-    "1-31-71",
-  ],
-  Polisassistent: [
-    "1-31-48",
-    "1-31-47",
-    "1-31-46",
-    "1-31-45",
-    "1-31-44",
-    "1-31-43",
-    "1-31-42",
-    "1-31-41",
-    "1-31-40",
-    "1-31-39",
-    "1-31-38",
-    "1-31-37",
-    "1-31-36",
-    "1-31-35",
-    "1-31-34",
-    "1-31-33",
-    "1-31-32",
-    "1-31-31",
-    "1-31-30",
-    "1-31-29",
-    "1-31-28",
-    "1-31-27",
-    "1-31-26",
-    "1-31-25",
-    "1-31-24",
-    "1-31-23",
-    "1-31-22",
-    "1-31-21",
-    "1-31-20",
-    "1-31-19",
-    "1-31-18",
-    "1-31-17",
-  ],
-  Aspirant: [
-    "1-30-50",
-    "1-30-49",
-    "1-30-48",
-    "1-30-47",
-    "1-30-46",
-    "1-30-45",
-    "1-30-44",
-    "1-30-43",
-    "1-30-42",
-    "1-30-41",
-    "1-30-40",
-    "1-30-39",
-    "1-30-38",
-    "1-30-37",
-    "1-30-36",
-    "1-30-35",
-    "1-30-34",
-    "1-30-33",
-    "1-30-32",
-    "1-30-31",
-    "1-30-30",
-  ],
-  Studerande: [
-    "1-29-50",
-    "1-29-49",
-    "1-29-48",
-    "1-29-47",
-    "1-29-46",
-    "1-29-45",
-    "1-29-44",
-    "1-29-43",
-    "1-29-42",
-    "1-29-41",
-    "1-29-40",
-    "1-29-39",
-    "1-29-38",
-    "1-29-37",
-    "1-29-36",
-    "1-29-35",
-    "1-29-34",
-    "1-29-33",
-    "1-29-32",
-    "1-29-31",
-    "1-29-30",
-    "1-29-29",
-    "1-29-28",
-    "1-29-27",
-    "1-29-26",
-    "1-29-25",
-  ],
+  Rikspolischef: ["1-39-9910"],
+  "Btr. Rikspolischef": ["1-39-9900"],
+  Polisdirektör: ["1-39-9890"],
+  "Btr. Polisdirektör": ["1-39-9880"],
+  Polismästare: makeRakels(9870, 9820),
+  Polisöverintendent: makeRakels(9810, 9720),
+  Polisintendent: makeRakels(9710, 9580),
+  "Polissekreterare YB": makeRakels(9570, 9550),
+  Polissekreterare: makeRakels(9540, 9470),
+  "Poliskommissarie YB": makeRakels(9460, 9440),
+  Poliskommissarie: [...makeRakels(9430, 9310), "1-39-9140"],
+  "Polisinspektör YB": makeRakels(9300, 9280),
+  Polisinspektör: makeRakels(9270, 9150),
+  "Polisassistent 4års": makeRakels(9130, 8890),
+  Polisassistent: makeRakels(8880, 8570),
+  Polisaspirant: makeRakels(8560, 8360),
+  Polisstuderande: makeRakels(8350, 8100),
+  Praktikant: makeRakels(8090, 7640),
 };
 
 const rakelAssignments = Object.entries(rakelByRank).flatMap(([role, rakels]) =>
@@ -367,6 +208,25 @@ function updateAssignmentOptions() {
   if ([...roleInput.options].some((option) => option.value === currentValue)) {
     roleInput.value = currentValue;
   }
+}
+
+function setupRoleFilters() {
+  const roleFieldset = document.querySelector(".filter-panel fieldset");
+  const legend = roleFieldset.querySelector("legend");
+  roleFieldset.innerHTML = "";
+  roleFieldset.append(legend);
+
+  policeRanks.forEach((rank) => {
+    const label = document.createElement("label");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.name = "role";
+    checkbox.value = rank;
+    label.append(checkbox, ` ${rank}`);
+    roleFieldset.append(label);
+  });
+
+  filterInputs = [...document.querySelectorAll(".filter-panel input[type='checkbox']")];
 }
 
 function showApp() {
@@ -464,6 +324,35 @@ function renderMembers() {
   });
 }
 
+function renderLoginMembers() {
+  loginMemberCount.textContent = members.length;
+  loginMembersList.innerHTML = "";
+
+  if (members.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "login-members-empty";
+    empty.textContent = "Inga medlemmar är tillagda ännu.";
+    loginMembersList.append(empty);
+    return;
+  }
+
+  members.forEach((member) => {
+    const row = document.createElement("div");
+    row.className = "login-member-row";
+
+    const rakel = document.createElement("span");
+    rakel.className = "login-member-rakel";
+    rakel.textContent = member.discord;
+
+    const name = document.createElement("span");
+    name.className = "login-member-name";
+    name.textContent = member.name;
+
+    row.append(rakel, name);
+    loginMembersList.append(row);
+  });
+}
+
 function startMembersSync() {
   if (unsubscribeMembers) return;
 
@@ -478,6 +367,7 @@ function startMembersSync() {
         })
       );
       updateAssignmentOptions();
+      renderLoginMembers();
       renderMembers();
     },
     (error) => {
@@ -539,6 +429,8 @@ form.addEventListener("submit", async (event) => {
   updateAssignmentOptions();
 });
 
+setupRoleFilters();
+
 searchInput.addEventListener("input", renderMembers);
 filterInputs.forEach((input) => input.addEventListener("change", renderMembers));
 
@@ -548,6 +440,8 @@ clearFiltersBtn.addEventListener("click", () => {
   });
   renderMembers();
 });
+
+startMembersSync();
 
 if (localStorage.getItem(sessionKey) === "true") {
   showApp();

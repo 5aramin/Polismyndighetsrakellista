@@ -52,10 +52,17 @@ svg {
 }
 
 .login-view {
-  display: grid;
   min-height: 100vh;
-  place-items: center;
-  padding: 24px;
+  padding: 64px clamp(18px, 6vw, 92px);
+}
+
+.login-layout {
+  display: grid;
+  grid-template-columns: minmax(340px, 420px) minmax(320px, 560px);
+  align-items: center;
+  gap: clamp(28px, 6vw, 88px);
+  min-height: calc(100vh - 128px);
+  width: min(1120px, 100%);
 }
 
 .login-card {
@@ -181,6 +188,66 @@ select:focus {
   width: 100%;
   height: 48px;
   margin-top: 6px;
+}
+
+.login-members {
+  align-self: stretch;
+  max-height: min(640px, calc(100vh - 128px));
+  padding: 26px;
+  border: 1px solid var(--border-strong);
+  border-radius: 15px;
+  background: rgb(21 26 34 / 0.72);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.login-members-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.login-members-heading h2 {
+  margin: 0;
+  color: #dce2ee;
+  font-size: 18px;
+  text-transform: uppercase;
+}
+
+.login-members-list {
+  display: grid;
+  gap: 9px;
+  max-height: calc(100% - 50px);
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.login-member-row {
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgb(53 65 86 / 0.76);
+  border-radius: 10px;
+  background: rgb(9 13 19 / 0.58);
+}
+
+.login-member-rakel {
+  color: var(--blue);
+  font-weight: 900;
+}
+
+.login-member-name {
+  color: var(--text);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.login-members-empty {
+  margin: 18px 0 0;
+  color: var(--muted);
 }
 
 .app-view {
@@ -671,6 +738,19 @@ select:focus {
 }
 
 @media (max-width: 720px) {
+  .login-view {
+    padding: 18px 14px 36px;
+  }
+
+  .login-layout {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .login-members {
+    max-height: 420px;
+  }
+
   .app-view {
     padding: 14px 14px 36px;
   }
